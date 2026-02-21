@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FindIt - Lost & Found</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+  <ul class="menu">
+    <li onclick="showSection('home')">Home</li>
+
+    <li onclick="showSection('lost')">Lost Items</li>
+    <li onclick="showSection('found')">Found Items</li>
+
+    <li onclick="showSection('form')">Report Item</li>
+  </ul>
+</nav>
+
+<!-- INFO STRIP UNDER MENU -->
+<!-- (hero card removed) -->
+
+
+  <!-- HOME -->
+  <div id="home" class="section">
+    <!-- background video for home (place home_bg.mp4 in project) -->
+    <video id="homeVideo" autoplay muted loop playsinline>
+      <source src="home_bg.mp4" type="video/mp4">
+      <!-- fallback text if video not supported -->
+    </video>
+    <!-- logo, heading, and text placed in content container above the overlay -->
+    <div class="hero-content">
+      <div class="hero-overlay"></div>
+      <div class="hero-left">
+        <img src="logo.png" alt="FindIt">
+      </div>
+      <div class="hero-right">
+        <h1>FindIt — Lost & Found System</h1>
+        <p>"Turning lost moments into found memories"</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOST ITEMS -->
+  <div id="lost" class="section hidden">
+    <div class="hero-content">
+      <div class="hero-overlay"></div>
+      <div class="hero-left">
+        <img src="logo.png" alt="FindIt">
+      </div>
+      <div class="hero-right">
+        <h2>FindIt – Lost & Found System</h2>
+        <p>
+          A centralized platform to report lost items, view found items,
+          and help reconnect people with their belongings.
+        </p>
+      </div>
+    </div>
+
+    <select id="lostCategorySelect" class="dropdown">
+      <option selected disabled>Select Category</option>
+      <option>Electronic Devices</option>
+      <option>Ornaments</option>
+      <option>Study Material</option>
+      <option>Documents</option>
+      <option>Others</option>
+    </select>
+    <!-- container where lost items will be rendered -->
+    <div class="items-list" id="lostList"></div>
+  </div>
+
+  <!-- FOUND ITEMS -->
+  <div id="found" class="section hidden">
+    <div class="hero-content">
+      <div class="hero-overlay"></div>
+      <div class="hero-left">
+        <img src="logo.png" alt="FindIt">
+      </div>
+      <div class="hero-right">
+        <h2>FindIt – Lost & Found System</h2>
+        <p>
+          A centralized platform to report lost items, view found items,
+          and help reconnect people with their belongings.
+        </p>
+      </div>
+    </div>
+
+    <select id="foundCategorySelect" class="dropdown">
+      <option selected disabled>Select Category</option>
+      <option>Electronic Devices</option>
+      <option>Ornaments</option>
+      <option>Study Material</option>
+      <option>Documents</option>
+      <option>Others</option>
+    </select>
+    
+    <!-- container where found items will be rendered -->
+    <div class="items-list" id="foundList"></div>
+  </div>
+
+  <!-- REPORT ITEM -->
+  <div id="form" class="section hidden">
+    <div class="hero-content">
+      <div class="hero-overlay"></div>
+      <div class="hero-left">
+        <img src="logo.png" alt="FindIt">
+      </div>
+      <div class="hero-right">
+        <h2>Report an Item</h2>
+      </div>
+    </div>
+    <form id="itemForm" class="report-form">
+      <label>
+        Type
+        <select id="typeSelect" required>
+          <option value="lost">Lost</option>
+          <option value="found">Found</option>
+        </select>
+      </label>
+
+      <label>
+        Category
+        <select id="categorySelect" required>
+          <option selected disabled value="">Select Category</option>
+          <option>Electronic Devices</option>
+          <option>Ornaments</option>
+          <option>Study Material</option>
+          <option>Documents</option>
+          <option>Others</option>
+        </select>
+      </label>
+
+      <label>
+        Item name
+        <input id="itemName" type="text" placeholder="Item name" required>
+      </label>
+
+      <label>
+        Place
+        <input id="place" type="text" placeholder="Place" required>
+      </label>
+
+      <label>
+        Date
+        <input id="date" type="date">
+      </label>
+
+      <label>
+        Contact (optional)
+        <input id="contact" type="text" placeholder="Phone or email">
+      </label>
+
+      <label>
+        Image (optional)
+        <input id="imageInput" type="file" accept="image/*">
+      </label>
+
+        <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <!-- lost container removed (items render inside #lost) -->
+
+  <!-- SCRIPT -->
+  <script>
+    function showSection(id) {
+      console.log('Switching to section:', id);
+      document.querySelectorAll('.section').forEach(sec => {
+        sec.classList.add('hidden');
+      });
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove('hidden');
+        console.log('Section shown:', id);
+      }
+      // highlight active menu item
+      document.querySelectorAll('.menu > li').forEach(item => {
+        item.style.fontWeight = '400';
+        item.style.opacity = '0.7';
+      });
+      // find and highlight the clicked menu item
+      const menuItems = document.querySelectorAll('.menu > li');
+      menuItems.forEach((item, idx) => {
+        const sectionMap = ['home', 'lost', 'found', 'form'];
+        if (sectionMap[idx] === id) {
+          item.style.fontWeight = '700';
+          item.style.opacity = '1';
+        }
+      });
+      // scroll to top so change is visible
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // mark body when home is active so styles can make navbar/card transparent
+      document.body.classList.toggle('home-active', id === 'home');
+      // if showing lost/found, render items for that type (using selected category if available)
+      if (id === 'lost' || id === 'found') {
+        const sel = document.getElementById(id === 'lost' ? 'lostCategorySelect' : 'foundCategorySelect');
+        const cat = (sel && sel.value && sel.value !== '') ? sel.value : '';
+        renderCategory(id, cat);
+      }
+    }
+
+    // LocalStorage-backed items list
+    function getItems() {
+      try {
+        return JSON.parse(localStorage.getItem('findit_items') || '[]');
+      } catch (e) { return []; }
+    }
+
+    function saveItems(items) {
+      localStorage.setItem('findit_items', JSON.stringify(items));
+    }
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function toBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const type = document.getElementById('typeSelect').value;
+      const category = document.getElementById('categorySelect').value || '';
+      const itemName = document.getElementById('itemName').value.trim();
+      const place = document.getElementById('place').value.trim();
+      const date = document.getElementById('date').value;
+      const contact = document.getElementById('contact').value.trim();
+      const imageInput = document.getElementById('imageInput');
+
+      let image = '';
+      if (imageInput && imageInput.files && imageInput.files[0]) {
+        try { image = await toBase64(imageInput.files[0]); } catch (err) { image = ''; }
+      }
+
+      const items = getItems();
+      items.push({ id: Date.now(), type, category, itemName, place, date, contact, image });
+      saveItems(items);
+
+      document.getElementById('itemForm').reset();
+      renderLists();
+      // show the list for the submitted type and auto-select/render its category
+      const dest = type === 'lost' ? 'lost' : 'found';
+      showSection(dest);
+      const selId = dest === 'lost' ? 'lostCategorySelect' : 'foundCategorySelect';
+      const sel = document.getElementById(selId);
+      if (sel) {
+        sel.value = category;
+        renderCategory(dest, category);
+      }
+    }
+
+    function renderLists() {
+      // Initial state: prompt user to select a category to view items
+      const lostList = document.getElementById('lostList');
+      const foundList = document.getElementById('foundList');
+      if (lostList) lostList.innerHTML = '<div class="no-items">Please select a category to view items</div>';
+      if (foundList) foundList.innerHTML = '<div class="no-items">Please select a category to view items</div>';
+    }
+
+    function createCard(it) {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-left">
+          ${it.image ? `<img src="${it.image}" alt="${escapeHtml(it.itemName)}">` : `<div class="no-image">No image</div>`}
+        </div>
+        <div class="item-right">
+          <h3>${escapeHtml(it.itemName)}</h3>
+          <p><b>Category:</b> ${escapeHtml(it.category)}</p>
+          <p><b>Place:</b> ${escapeHtml(it.place)} ${it.date ? `• ${escapeHtml(it.date)}` : ''}</p>
+          ${it.contact ? `<p><b>Contact:</b> ${escapeHtml(it.contact)}</p>` : ''}
+        </div>
+      `;
+      return card;
+    }
+
+    function renderCategory(type, category) {
+      const items = getItems();
+      const listEl = type === 'lost' ? document.getElementById('lostList') : document.getElementById('foundList');
+      if (!listEl) return;
+      listEl.innerHTML = '';
+      // when no category given, show all items of that type
+      let group;
+      if (!category) {
+        group = items.filter(it => it.type === type);
+        if (group.length === 0) {
+          listEl.innerHTML = '<div class="no-items">No items found</div>';
+          return;
+        }
+      } else {
+        group = items.filter(it => it.type === type && it.category === category);
+        if (group.length === 0) {
+          listEl.innerHTML = '<div class="no-items">No items found</div>';
+          return;
+        }
+      }
+      group.slice().reverse().forEach(it => listEl.appendChild(createCard(it)));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('itemForm');
+      if (form) form.addEventListener('submit', handleSubmit);
+      renderLists();
+
+      // category selects: render only when a category is picked
+      const lostSel = document.getElementById('lostCategorySelect');
+      if (lostSel) lostSel.addEventListener('change', (e) => renderCategory('lost', e.target.value));
+      const foundSel = document.getElementById('foundCategorySelect');
+      if (foundSel) foundSel.addEventListener('change', (e) => renderCategory('found', e.target.value));
+
+      // ensure home is visible and properly highlighted on load
+      const homeEl = document.getElementById('home');
+      if (homeEl && !homeEl.classList.contains('hidden')) {
+        document.body.classList.add('home-active');
+        // highlight Home menu item
+        const menuItems = document.querySelectorAll('.menu > li');
+        if (menuItems.length > 0) {
+          menuItems[0].style.fontWeight = '700';
+          menuItems[0].style.opacity = '1';
+          for (let i = 1; i < menuItems.length; i++) {
+            menuItems[i].style.fontWeight = '400';
+            menuItems[i].style.opacity = '0.7';
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
